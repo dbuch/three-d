@@ -3,7 +3,7 @@ use std::path::Path;
 ///
 /// Functionality for saving resources. Only available on desktop at the moment.
 ///
-pub struct Saver {}
+pub struct Saver;
 
 impl Saver {
     ///
@@ -13,6 +13,38 @@ impl Saver {
         let mut file = std::fs::File::create(path)?;
         use std::io::prelude::*;
         file.write_all(bytes)?;
+        Ok(())
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+impl Saver {
+    ///
+    /// Saves the given RGB pixels as an image.
+    ///
+    pub fn save_pixels<P: AsRef<Path>>(
+        path: P,
+        pixels: &[u8],
+        width: u32,
+        height: u32,
+    ) -> crate::ThreeDResult<()> {
+        let mut pixels_out = vec![0u8; width as usize * height as usize * 4];
+        for row in 0..height as usize {
+            for col in 0..width as usize {
+                for i in 0..4 {
+                    pixels_out[4 * width as usize * (height as usize - row - 1) + 4 * col + i] =
+                        pixels[4 * width as usize * row + 4 * col + i];
+                }
+            }
+        }
+
+        image::save_buffer(
+            path,
+            &pixels_out,
+            width as u32,
+            height as u32,
+            image::ColorType::Rgba8,
+        )?;
         Ok(())
     }
 }

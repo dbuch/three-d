@@ -75,13 +75,14 @@ impl Program {
         for i in 0..num_uniforms {
             let info = context.get_active_uniform(&id, i);
             let location = context.get_uniform_location(&id, &info.name());
-            /*println!(
+            #[cfg(feature = "debug")]
+            println!(
                 "Uniform location: {:?}, name: {}, type: {}, size: {}",
                 location,
                 info.name().split('[').collect::<Vec<_>>()[0].to_string(),
                 info.type_(),
                 info.size()
-            );*/
+            );
             if let Some(loc) = location {
                 uniforms.insert(
                     info.name().split('[').collect::<Vec<_>>()[0].to_string(),

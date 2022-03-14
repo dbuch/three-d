@@ -123,10 +123,11 @@ pub(in crate::core) fn new_framebuffer(
 }
 
 #[cfg(feature = "debug")]
-fn check(context: &Context) -> ThreeDResult<()> {
-    context
-        .check_framebuffer_status()
-        .or_else(|status| Err(CoreError::RenderTargetCreation))
+pub(crate) fn check(context: &Context) -> ThreeDResult<()> {
+    let status = context
+        .check_framebuffer_status();
+    dbg!(status);
+    Ok(())
 }
 
 fn clear(context: &Context, clear_state: &ClearState) {
